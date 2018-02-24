@@ -1,0 +1,5 @@
+<!--pages/worldtime/worldtime.wxml-->
+<view wx:for="{{cities}}" wx:key="*this">
+  <text>{{item.name}}</text>
+  <text>{{item.localTimeStr}}</text>
+</view>
