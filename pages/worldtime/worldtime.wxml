@@ -1,5 +1,11 @@
 <!--pages/worldtime/worldtime.wxml-->
-<view wx:for="{{cities}}" wx:key="*this">
-  <text>{{item.name}}</text>
-  <text>{{item.localTimeStr}}</text>
+<view class="container" wx:for="{{cities}}" wx:key="*this">
+  <view class="item">
+    <text class="cityName">{{item.name}}</text>
+    <view class="cityTimeContainer">
+      <text class="cityTimeDayLabel">{{item.dayLabel}}</text>
+      <text class="cityTime">{{item.localTimeStr}}</text>
+      <text class="cityTimeHourLabel">{{item.hourLabel}}</text>
+    </view>
+  </view>
 </view>

@@ -1,1 +1,47 @@
 /* pages/worldtime/worldtime.wxss */
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  padding: 0px 0px;
+  border-top: 1px solid lightgray;
+}
+
+.item {
+  height: 80px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  /*border-bottom: 0px solid lightgray;*/
+}
+
+.cityName {
+  color: black;
+}
+
+.cityTimeContainer {
+  height: 100%;
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0px 0px;
+}
+.cityTime {
+  color : red;
+}
+
+.cityTimeDayLabel {
+  color : lightgrey;
+  font-size: 60%;
+}
+
+.cityTimeHourLabel {
+  color : lightgrey;
+  font-size: 60%;
+}

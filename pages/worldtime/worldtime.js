@@ -17,9 +17,6 @@ Page({
   onLoad: function (options) {
     var that = this;
     
-
-
-
     wx.request({
       url: 'http://localhost:5000',
       success:function(res) {
@@ -33,6 +30,9 @@ Page({
           var timezoneOffset = localTimezoneOffset + city.timezone_offset; //hours
           var localTime = nowTime + timezoneOffset * 60 * 60 * 1000;
           city.localTimeStr = util.formatTime(new Date(localTime));
+          city.name = util.toTitleCase(city.name);
+          city.dayLabel = "Today";
+          city.hourLabel = "16 hrs behind";
         });
         that.setData({
           cities : cities
