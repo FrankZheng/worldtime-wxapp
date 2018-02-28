@@ -1,6 +1,46 @@
 // pages/worldtime/worldtime.js
 const util = require('../../utils/util.js')
 
+function buildDayLabel(nowTime, offset) {
+  let date = new Date(nowTime);
+  let hours = date.getHours() + offset;
+  if (hours < 0) {
+    return "Yesterday";
+  } else if (hours > 24) {
+    return "Tomorrow";
+  } else {
+    return "Today";
+  }
+}
+
+function buildHourLabel(offset) {
+  if (offset == 0) {
+    return "Local Time";
+  } else if (offset < 0) {
+    return -offset + " hrs bebind";
+  } else {
+    return offset + " hrs ahead";
+  }
+}
+
+function processCityList(res) {
+  //console.log(res.data);
+  let now = new Date();
+  let localTimezoneOffset = now.getTimezoneOffset() / 60; //minutes
+  //console.log(util.formatTime(now));
+  let nowTime = now.getTime();
+  let cities = res.data;
+  cities.forEach(function (city) {
+    city.name = util.toTitleCase(city.name);
+    //calculate time
+    let timezoneOffset = localTimezoneOffset + city.timezone_offset; //hours
+    let localTime = nowTime + timezoneOffset * 60 * 60 * 1000;
+    city.localTimeStr = util.formatTime(new Date(localTime));
+    city.dayLabel = buildDayLabel(nowTime, timezoneOffset);
+    city.hourLabel = buildHourLabel(timezoneOffset);
+  });
+  return cities;
+}
 
 Page({
 
@@ -16,24 +56,11 @@ Page({
    */
   onLoad: function (options) {
     var that = this;
-    
+
     wx.request({
       url: 'http://localhost:5000',
       success:function(res) {
-        //console.log(res.data);
-        var now = new Date();
-        var localTimezoneOffset = now.getTimezoneOffset() / 60;
-        console.log(util.formatTime(now));
-        var nowTime = now.getTime();
-        var cities = res.data;
-        cities.forEach(function(city) {
-          var timezoneOffset = localTimezoneOffset + city.timezone_offset; //hours
-          var localTime = nowTime + timezoneOffset * 60 * 60 * 1000;
-          city.localTimeStr = util.formatTime(new Date(localTime));
-          city.name = util.toTitleCase(city.name);
-          city.dayLabel = "Today";
-          city.hourLabel = "16 hrs behind";
-        });
+        let cities = processCityList(res);
         that.setData({
           cities : cities
         })
