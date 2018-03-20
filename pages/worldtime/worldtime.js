@@ -1,6 +1,8 @@
 // pages/worldtime/worldtime.js
 const util = require('../../utils/util.js')
 
+const DEFAULT_CITY_URL = 'http://localhost:3000/defaultCities';
+
 function buildDayLabel(nowTime, offset) {
   let date = new Date(nowTime);
   let hours = date.getHours() + offset;
@@ -31,9 +33,9 @@ function processCityList(res) {
   let nowTime = now.getTime();
   let cities = res.data;
   cities.forEach(function (city) {
-    city.name = util.toTitleCase(city.name);
+    city.name = util.toTitleCase(city.displayName);
     //calculate time
-    let timezoneOffset = localTimezoneOffset + city.timezone_offset; //hours
+    let timezoneOffset = localTimezoneOffset + city.timezone; //hours
     let localTime = nowTime + timezoneOffset * 60 * 60 * 1000;
     city.localTimeStr = util.formatTime(new Date(localTime));
     city.dayLabel = buildDayLabel(nowTime, timezoneOffset);
@@ -58,7 +60,8 @@ Page({
     var that = this;
 
     wx.request({
-      url: 'http://localhost:5000',
+      url: DEFAULT_CITY_URL,
+      method: 'POST',
       success:function(res) {
         let cities = processCityList(res);
         that.setData({
