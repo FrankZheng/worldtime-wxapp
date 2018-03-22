@@ -1,7 +1,7 @@
 // pages/worldtime/worldtime.js
 const util = require('../../utils/util.js')
 
-const DEFAULT_CITY_URL = 'http://localhost:3000/defaultCities';
+const DEFAULT_CITY_URL = 'http://localhost:3000/api/defaultCities';
 
 function buildDayLabel(nowTime, offset) {
   let date = new Date(nowTime);

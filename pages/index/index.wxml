@@ -1,13 +1,36 @@
 <!--index.wxml-->
 <view class="container">
-  <view class="userinfo">
-    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
-    <block wx:else>
-      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" background-size="cover"></image>
-      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-    </block>
+  <!-- Top Bar-->
+  <view class="topBar {{topBarState != 0 ? 'hide' : ''}}">
+    <view class="item" bindtap="onEditTap">Edit</view>
+    <view class="item separator" />
+    <view class="item" bindtap="onAddTap">Add</view>
+    <view class="horizPlaceholder"/>
+    <view class="item">Local: Beijing 2:37 PM</view>
   </view>
-  <view class="usermotto">
-    <text class="user-motto">{{motto}}</text>
+  <view class="topBar {{topBarState != 1 ? 'hide' : ''}}">
+    <view class="item" bindtap="onCancelTap">Cancel</view>
+    <view class="item separator" />
+    <view class="item" bindtap="onDeleteTap">Delete</view>
   </view>
+  <view class="topBar {{topBarState != 2 ? 'hide' : ''}}">
+    <view class="item" bindtap="onCancelTap">Cancel</view>
+    <view class="item separator" />
+    <view class="item searchView" >Search</view>
+  </view>
+
+  <!-- City List-->
+  <scroll-view class="cityListView" wx:for="{{cities}}" wx:key="*this">
+    <view class="item">
+      <view class="cityName">{{item.name}}</view>
+      <view class="horizPlaceholder"/>
+      <view class="timeView">
+        <view class="dayLabel">{{item.dayLabel}}</view>
+        <view class="time">{{item.localTimeStr}}</view>
+        <view class="hourLabel">{{item.hourLabel}}</view>
+      </view>
+    </view>
+  </scroll-view>
+  
+
 </view>

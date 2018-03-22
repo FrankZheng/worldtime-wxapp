@@ -1,11 +1,13 @@
 <!--pages/worldtime/worldtime.wxml-->
-<view class="container" wx:for="{{cities}}" wx:key="*this">
-  <view class="item">
-    <text class="cityName">{{item.name}}</text>
-    <view class="cityTimeContainer">
-      <text class="cityTimeDayLabel">{{item.dayLabel}}</text>
-      <text class="cityTime">{{item.localTimeStr}}</text>
-      <text class="cityTimeHourLabel">{{item.hourLabel}}</text>
+<view class="container">
+  <scroll-view class="city_list_view" wx:for="{{cities}}" wx:key="*this">
+    <view class="item">
+      <text class="cityName">{{item.name}}</text>
+      <view class="cityTimeContainer">
+        <text class="cityTimeDayLabel">{{item.dayLabel}}</text>
+        <text class="cityTime">{{item.localTimeStr}}</text>
+        <text class="cityTimeHourLabel">{{item.hourLabel}}</text>
+      </view>
     </view>
-  </view>
+  </scroll-view>
 </view>

@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/worldtime/worldtime",
     "pages/index/index",
+    "pages/worldtime/worldtime",
     "pages/logs/logs"
   ],
   "window": {
