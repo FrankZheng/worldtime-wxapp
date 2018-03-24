@@ -70,7 +70,7 @@
 .topBar .separator {
   height: 60%;
   width: 1rpx;
-  padding: 1rpx;
+  padding: 0rpx;
   margin: 20rpx;
   /* padding: 0rpx 5rpx; */
   background-color: #e8e8e8;
@@ -105,6 +105,10 @@
   border-bottom: 0;
 }
 */
+
+.cityListView .item .checkbox {
+  padding-left: 30rpx; 
+}
 
 .cityListView .item .cityName {
   padding-left: 30rpx;

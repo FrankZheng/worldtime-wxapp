@@ -3,50 +3,115 @@ const util = require('../../utils/util.js')
 
 const app = getApp()
 
-const DEFAULT_CITY_URL = 'http://localhost:3000/api/defaultCities';
+//const DEFAULT_CITY_URL = 'http://localhost:3000/api/defaultCities';
+const DEFAULT_CITY_URL = 'http://101.236.49.93/api/defaultCities';
+
+const KEY_CITIES = "city_list"; //for storage
+const KEY_DEFAULT_CITIES_LOADED = "default_cities_loaded"; 
 
 Page({
   data: {
-    topBarState: 0,
+    state: 0,
     cities: []
   },
   onLoad: function() {
     console.log("onLoad");
+    if (!wx.getStorageSync(KEY_DEFAULT_CITIES_LOADED)) {
+      this.loadDefaultCities(cities => {
+        this.reloadCities(cities);
+        this.saveCities(cities);
+        wx.setStorageSync(KEY_DEFAULT_CITIES_LOADED, true);
+      });
+    } else {
+      let cities = this.loadCities();
+      cities = processCityList(cities);
+      this.reloadCities(cities);
+    }
+    
+  },
+
+  loadDefaultCities: function(success, fail) {
+    console.log("load default cities from server");
     wx.request({
       url: DEFAULT_CITY_URL,
       method: 'POST',
       success: res => {
-        let cities = processCityList(res);
-        this.setData({
-          cities: cities
-        })
+        //TOOD: check if res is expected
+        //Content-Type
+        //status code
+        //json format, etc
+        let cities = processCityList(res.data);
+        success(cities);
       },
       fail: function (err) {
         console.log(err);
+        fail();
       }
-    })
+    });
   },
+
+  saveCities: function(cities) {
+    console.log("saveCities");
+    wx.setStorageSync(KEY_CITIES, cities);
+  },
+
+  loadCities: function() {
+    console.log("loadCities");
+    let cities = wx.getStorageSync(KEY_CITIES);
+    return cities;
+  },
+
+  onCityItemTap: function(e) {
+    let index = e.currentTarget.dataset.index;
+    console.log("onCityItemTap, index:" + index);
+    if (this.data.state == 1) {
+      let cities = this.data.cities; 
+      let city = cities[index];
+      city.checked = !city.checked;
+      this.reloadCities(cities);
+    }
+  },
+
+  reloadCities:function(cities) {
+    this.setData({
+      cities:cities
+    });
+  },
+
   onCancelTap: function() {
     console.log("onCancelTap");
-    this.setTopBarState(0);
+    this.setState(0);
   },
+
   onEditTap: function() {
     console.log("onEditTap");
-    this.setTopBarState(1);
+    this.setState(1);
   },
+
   onAddTap: function() {
     console.log("onAddTap");
-    this.setTopBarState(2);
+    this.setState(2);
   },
+
   onDeleteTap: function() {
     console.log("onAddTap");
+    let cities = this.data.cities;
+    let remainedCities = [];
+    cities.filter(city => {
+      if(!city.checked) {
+        remainedCities.push(city);
+      }
+    });
+    this.reloadCities(remainedCities);
+    this.saveCities(remainedCities);
   },
-  setTopBarState: function(newState) {
-    console.log("setTopBarState, new:" + newState + " old:" + this.data.topBarState);
+
+  setState: function(newState) {
+    console.log("setState, new:" + newState + " old:" + this.data.state);
     this.setData({
-      topBarState : newState
+      state : newState
     })
-  }
+  },
 })
 
 
@@ -73,13 +138,13 @@ function buildHourLabel(offset) {
   }
 }
 
-function processCityList(res) {
-  console.log(res.data);
+function processCityList(cityList) {
+  //console.log(res.data);
   let now = new Date();
   let localTimezoneOffset = now.getTimezoneOffset() / 60; //minutes
   //console.log(util.formatTime(now));
   let nowTime = now.getTime();
-  let cities = res.data;
+  let cities = cityList;
   cities.forEach(function (city) {
     city.name = util.toTitleCase(city.displayName);
     //calculate time
