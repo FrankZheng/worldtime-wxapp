@@ -1,10 +1,11 @@
 //index.js
-const util = require('../../utils/util.js')
+const util = require('../../utils/util.js');
+const log = require('../../utils/log.js');
 
 const app = getApp()
 
 //const DEFAULT_CITY_URL = 'http://localhost:3000/api/defaultCities';
-const DEFAULT_CITY_URL = 'http://101.236.49.93/api/defaultCities';
+const DEFAULT_CITY_URL = 'https://xqlabserv.com/api/defaultCities';
 
 const KEY_CITIES = "city_list"; //for storage
 const KEY_DEFAULT_CITIES_LOADED = "default_cities_loaded"; 
@@ -15,7 +16,7 @@ Page({
     cities: []
   },
   onLoad: function() {
-    console.log("onLoad");
+    log("onLoad");
     if (!wx.getStorageSync(KEY_DEFAULT_CITIES_LOADED)) {
       this.loadDefaultCities(cities => {
         this.reloadCities(cities);
@@ -31,7 +32,7 @@ Page({
   },
 
   loadDefaultCities: function(success, fail) {
-    console.log("load default cities from server");
+    log("load default cities from server");
     wx.request({
       url: DEFAULT_CITY_URL,
       method: 'POST',
@@ -51,19 +52,19 @@ Page({
   },
 
   saveCities: function(cities) {
-    console.log("saveCities");
+    log("saveCities");
     wx.setStorageSync(KEY_CITIES, cities);
   },
 
   loadCities: function() {
-    console.log("loadCities");
+    log("loadCities");
     let cities = wx.getStorageSync(KEY_CITIES);
     return cities;
   },
 
   onCityItemTap: function(e) {
     let index = e.currentTarget.dataset.index;
-    console.log("onCityItemTap, index:" + index);
+    log("onCityItemTap, index:" + index);
     if (this.data.state == 1) {
       let cities = this.data.cities; 
       let city = cities[index];
@@ -79,22 +80,25 @@ Page({
   },
 
   onCancelTap: function() {
-    console.log("onCancelTap");
+    log("onCancelTap");
     this.setState(0);
   },
 
   onEditTap: function() {
-    console.log("onEditTap");
+    log("onEditTap");
     this.setState(1);
   },
 
   onAddTap: function() {
-    console.log("onAddTap");
-    this.setState(2);
+    log("onAddTap");
+    //this.setState(2);
+    wx.navigateTo({
+      url: '../search/search',
+    })
   },
 
   onDeleteTap: function() {
-    console.log("onAddTap");
+    log("onAddTap");
     let cities = this.data.cities;
     let remainedCities = [];
     cities.filter(city => {
@@ -107,7 +111,7 @@ Page({
   },
 
   setState: function(newState) {
-    console.log("setState, new:" + newState + " old:" + this.data.state);
+    log("setState, new:" + newState + " old:" + this.data.state);
     this.setData({
       state : newState
     })
