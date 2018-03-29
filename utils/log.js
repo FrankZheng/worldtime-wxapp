@@ -1,13 +1,7 @@
-const formatString = (formatStr, args) => {
-  return formatStr.replace(/{(\d+)}/g, function (match, number) {
-    return typeof args[number] != 'undefined'
-      ? args[number]
-      : match;
-  });
-}
+const util = require('./util.js');
 
 const log = (format, ...args) => {
-  let msg = formatString(format, args);
+  let msg = util.sprintf(format, ...args);
   console.log(msg);
 }
 

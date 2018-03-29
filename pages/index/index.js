@@ -1,14 +1,14 @@
 //index.js
 const util = require('../../utils/util.js');
 const log = require('../../utils/log.js');
+const net = require('../../network/network.js');
+const repo = require('../../repository/repository.js');
+const prefs = require('../../preference/preference.js');
 
 const app = getApp()
 
 //const DEFAULT_CITY_URL = 'http://localhost:3000/api/defaultCities';
 const DEFAULT_CITY_URL = 'https://xqlabserv.com/api/defaultCities';
-
-const KEY_CITIES = "city_list"; //for storage
-const KEY_DEFAULT_CITIES_LOADED = "default_cities_loaded"; 
 
 Page({
   data: {
@@ -17,11 +17,11 @@ Page({
   },
   onLoad: function() {
     log("onLoad");
-    if (!wx.getStorageSync(KEY_DEFAULT_CITIES_LOADED)) {
+    if (!prefs.defaultCitiesLoad) {
       this.loadDefaultCities(cities => {
         this.reloadCities(cities);
-        this.saveCities(cities);
-        wx.setStorageSync(KEY_DEFAULT_CITIES_LOADED, true);
+        repo.saveCities();
+        prefs.defaultCitiesLoaded = true; 
       });
     } else {
       let cities = this.loadCities();
@@ -33,33 +33,26 @@ Page({
 
   loadDefaultCities: function(success, fail) {
     log("load default cities from server");
-    wx.request({
-      url: DEFAULT_CITY_URL,
-      method: 'POST',
-      success: res => {
-        //TOOD: check if res is expected
-        //Content-Type
-        //status code
-        //json format, etc
-        let cities = processCityList(res.data);
-        success(cities);
-      },
-      fail: function (err) {
-        console.log(err);
+    net.post(DEFAULT_CITY_URL, {}, data => {
+      let cities = processCityList(data);  
+      success(cities);
+    }, e => {
+      log('failed to get default cities: {0}', e);
+      if(fail != null) {
         fail();
       }
-    });
+    })
+    
   },
 
   saveCities: function(cities) {
     log("saveCities");
-    wx.setStorageSync(KEY_CITIES, cities);
+    repo.saveCities(cities);
   },
 
   loadCities: function() {
     log("loadCities");
-    let cities = wx.getStorageSync(KEY_CITIES);
-    return cities;
+    return repo.loadCities();
   },
 
   onCityItemTap: function(e) {
@@ -150,7 +143,7 @@ function processCityList(cityList) {
   let nowTime = now.getTime();
   let cities = cityList;
   cities.forEach(function (city) {
-    city.name = util.toTitleCase(city.displayName);
+    city.displayName = util.toTitleCase(city.displayName);
     //calculate time
     let timezoneOffset = localTimezoneOffset + city.timezone; //hours
     let localTime = nowTime + timezoneOffset * 60 * 60 * 1000;

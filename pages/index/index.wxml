@@ -25,7 +25,7 @@
       bindtap="onCityItemTap" data-index="{{index}}">
       <icon class="checkbox {{state != 1 ? 'hide' : ''}}" 
       type="{{item.checked ? 'success' : 'circle'}}"/>
-      <view class="cityName">{{item.name}}</view>
+      <view class="cityName">{{item.displayName}}</view>
       <view class="horizPlaceholder"/>
       <view class="timeView">
         <view class="dayLabel">{{item.dayLabel}}</view>

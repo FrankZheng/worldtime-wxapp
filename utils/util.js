@@ -1,3 +1,21 @@
+
+const sprintf = (formatStr, ...args) => {
+  return formatStr.replace(/{(\d+)}/g, function (match, number) {
+    let typeStr = typeof args[number];
+    if (typeStr != 'undefined') {
+      let arg = args[number];
+      if (typeStr == 'object') {
+        return JSON.stringify(arg);
+      } else {
+        return arg;
+      }
+    } else {
+      return match;
+    }
+  });
+}
+
+
 const formatDateTime = date => {
   const year = date.getFullYear()
   const month = date.getMonth() + 1
@@ -31,7 +49,8 @@ const toTitleCase = str => {
 module.exports = {
   formatDateTime : formatDateTime,
   formatTime : formatTime,
-  toTitleCase : toTitleCase
+  toTitleCase : toTitleCase,
+  sprintf : sprintf
 }
 
 
