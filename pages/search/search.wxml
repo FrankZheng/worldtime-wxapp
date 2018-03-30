@@ -20,8 +20,9 @@
         </view>
         <view class="weui-cells searchbar-result" wx:if="{{inputVal.length > 0}}">
           <view class="weui-cell__bd" wx:for="{{searchResult}}" wx:key="{{index}}">
-              <view class="weui-cell" hover-class="weui-cell_active">
-              {{item.displayName}}, {{item.stateName}}, {{item.countryName}} 
+              <view class="weui-cell {{item.added ? 'weui-cell-added' : ''}}" hover-class="weui-cell_active"
+              bindtap="onSearchResultItemTap" data-index="{{index}}">
+                {{item.displayName}}, {{item.stateName}}, {{item.countryName}}{{item.added ? " (added)" : ""}} 
               </view>
           </view>
         </view>

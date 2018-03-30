@@ -2,6 +2,7 @@
 const log = require('../../utils/log.js');
 const net = require('../../network/network.js');
 const util = require('../../utils/util.js');
+const repo = require('../../repository/repository.js');
 
 const SEARCH_API_URL = 'https://xqlabserv.com/api/searchCityByFuzzyName';
 
@@ -47,6 +48,10 @@ Page({
       inputVal: inputVal
     });
 
+    if(inputVal.length == 0) {
+      return;
+    }
+
     //TODO: send api to search
     if (searchTimer) {
       clearTimeout(searchTimer);
@@ -64,18 +69,48 @@ Page({
       name: name
     }, data => {
       log("get search result: {0}", data);
+      let result = processSearchResult(data);
+      log("result is {0}", result);
       this.setData({
-        searchResult : data
+        searchResult : result
       });
     }, e => {
-      log("failed to search by {0}", name);
+      log("failed to search city by {0}", name);
     });
   },
 
-  processSearchResult: function(result) {
-    result.forEach()
-  } 
+  onSearchResultItemTap: function(e) {
+    let index = e.currentTarget.dataset.index;
+    let city = this.data.searchResult[index];
+    log("select {0}, {1}", index, city);
+    if (!city.added) {
+      repo.saveCity(city);
+      wx.navigateBack(); 
+    }
+  }
 
-})
+});
+
+
+const processSearchResult = result => {
+  let savedCities = repo.loadCities();
+  //log("savedCities, {0}", savedCities);
+
+  result.forEach( city => {
+    //process city fields
+    city.displayName = util.toTitleCase(city.displayName);
+
+    let geonameId = city.geonameId;
+    let finded = savedCities.filter ( savedCity => {
+      return savedCity.geonameId == geonameId;
+    });
+    if (finded.length > 0) {
+      city.added = true;
+    } else {
+      city.added = false;
+    }
+  });
+  return result;
+};
 
 

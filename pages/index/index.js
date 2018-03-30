@@ -15,34 +15,51 @@ Page({
     state: 0,
     cities: []
   },
+
+  loadingCities : false,
+
   onLoad: function() {
     log("onLoad");
-    if (!prefs.defaultCitiesLoad) {
+    if (!prefs.defaultCitiesLoaded) {
       this.loadDefaultCities(cities => {
         this.reloadCities(cities);
-        repo.saveCities();
+        repo.saveCities(cities);
         prefs.defaultCitiesLoaded = true; 
       });
-    } else {
+    }
+  },
+
+  onShow: function() {
+    log("onShow");
+    if (!this.loadingCities) {
       let cities = this.loadCities();
       cities = processCityList(cities);
       this.reloadCities(cities);
     }
-    
+  },
+
+  onHide: function() {
+    log("onHide");
+  },
+
+  onUnLoad: function() {
+    log("onUnLoad");
   },
 
   loadDefaultCities: function(success, fail) {
     log("load default cities from server");
+    this.loadingCities = true;
     net.post(DEFAULT_CITY_URL, {}, data => {
       let cities = processCityList(data);  
       success(cities);
+      this.loadingCities = false;
     }, e => {
       log('failed to get default cities: {0}', e);
       if(fail != null) {
         fail();
       }
-    })
-    
+      this.loadingCities = false;
+    });
   },
 
   saveCities: function(cities) {

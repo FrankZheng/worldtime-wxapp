@@ -17,6 +17,14 @@ const saveCity = (city) => {
   saveCities(cities);
 }
 
+const findCityByGeonameId = (geonameId) => {
+  let cities = loadCities();
+  cities.filter( city => {
+    return city.geonameId == geonameId;
+  });
+  //should be only one
+  return cities.length == 0 ? null : cities[0];
+}
 
 module.exports = {
   loadCities: loadCities,

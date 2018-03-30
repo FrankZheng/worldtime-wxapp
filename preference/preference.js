@@ -8,7 +8,7 @@ const put = (key, value) => {
 
 const get = (key, defaultValue = null) => {
   let value = wx.getStorageSync(key);
-  return value == null ? value : defaultValue;
+  return value != null ? value : defaultValue;
 }
 
 
