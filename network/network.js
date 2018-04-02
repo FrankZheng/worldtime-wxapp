@@ -17,7 +17,10 @@ const COMMON_HEADER = {
   CONTENT_TYPE_KEY: CONTENT_TYPE_JSON
 }
 
-const post = (url, data, success, fail) => {
+//TODO: wrap some error class, which include error code / error message
+//TODO: wrap some response class, which include HTTP statusCode, data and headers
+
+const post = (url, data, completion) => {
   log("send post request, url:{0}, data:{1}", url, data);
 
   // wx.showLoading({
@@ -36,19 +39,19 @@ const post = (url, data, success, fail) => {
       log("response, statusCode:{0}, header:{1}, data:{2}", res.statusCode, res.header, res.data);
       if (res.statusCode != 200) {
         let errorMsg = utils.sprintf("Error Response, Status Code:{0}", res.statusCode);
-        fail(errorMsg);
+        completion(null, errorMsg);
         return;
       }
       //check header
       let contentType = res.header[CONTENT_TYPE_KEY];
       if (contentType == null || contentType.search(CONTENT_TYPE_JSON) == -1) {
         let errorMsg = utils.sprintf("Error Response, Wrong Content-Type:{0}", contentType);  
-        fail(errorMsg);
+        completion(null, errorMsg);
         return;
       }
       
       //TODO: check if data is json format
-      success(res.data);
+      completion(res.data, null);
       
 
     },
@@ -59,9 +62,8 @@ const post = (url, data, success, fail) => {
       //   icon: 'loading',
       //   duration: 2000
       // });
-      if (fail != null) {
-        fail(res);
-      }
+      completion(null, res);
+      
     },
     complete: () => {
       log("request complete");

@@ -4,11 +4,11 @@ const log = require('../../utils/log.js');
 const net = require('../../network/network.js');
 const repo = require('../../repository/repository.js');
 const prefs = require('../../preference/preference.js');
+const requests = require('../../network/requests.js');
+
+const loadDefaultCities = requests.loadDefaultCities;
 
 const app = getApp()
-
-//const DEFAULT_CITY_URL = 'http://localhost:3000/api/defaultCities';
-const DEFAULT_CITY_URL = 'https://xqlabserv.com/api/defaultCities';
 
 Page({
   data: {
@@ -49,16 +49,16 @@ Page({
   loadDefaultCities: function(success, fail) {
     log("load default cities from server");
     this.loadingCities = true;
-    net.post(DEFAULT_CITY_URL, {}, data => {
-      let cities = processCityList(data);  
-      success(cities);
+    loadDefaultCities((data, error) => {
       this.loadingCities = false;
-    }, e => {
-      log('failed to get default cities: {0}', e);
-      if(fail != null) {
-        fail();
+      if (error) {
+        if (fail != null) {
+          fail();
+        }
+      } else {
+        let cities = processCityList(data);
+        success(cities);  
       }
-      this.loadingCities = false;
     });
   },
 

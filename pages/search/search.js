@@ -1,8 +1,10 @@
 // pages/search/search.js
 const log = require('../../utils/log.js');
-const net = require('../../network/network.js');
 const util = require('../../utils/util.js');
 const repo = require('../../repository/repository.js');
+const requests = require('../../network/requests.js');
+
+const searchCityByFuzzyName = requests.searchCityByFuzzyName;
 
 const SEARCH_API_URL = 'https://xqlabserv.com/api/searchCityByFuzzyName';
 
@@ -65,18 +67,32 @@ Page({
   },
 
   searchCities: function(name) {
-    net.post(SEARCH_API_URL, {
+    // net.post(SEARCH_API_URL, {
+    //   name: name
+    // }, data => {
+    //   log("get search result: {0}", data);
+    //   let result = processSearchResult(data);
+    //   log("result is {0}", result);
+    //   this.setData({
+    //     searchResult : result
+    //   });
+    // }, e => {
+    //   log("failed to search city by {0}", name);
+    // });
+    searchCityByFuzzyName({
       name: name
-    }, data => {
-      log("get search result: {0}", data);
-      let result = processSearchResult(data);
-      log("result is {0}", result);
-      this.setData({
-        searchResult : result
-      });
-    }, e => {
-      log("failed to search city by {0}", name);
-    });
+    }, (data, error) => {
+      if(error) {
+        log("failed to search city by {0}", name);
+      } else {
+        log("get search result: {0}", data);
+        let result = processSearchResult(data);
+        log("result is {0}", result);
+        this.setData({
+          searchResult : result
+        });
+      }
+    })
   },
 
   onSearchResultItemTap: function(e) {
