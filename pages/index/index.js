@@ -108,16 +108,32 @@ Page({
   },
 
   onDeleteTap: function() {
-    log("onAddTap");
-    let cities = this.data.cities;
-    let remainedCities = [];
-    cities.filter(city => {
-      if(!city.checked) {
-        remainedCities.push(city);
+    log("onDeleteTap");
+    //TODO: add confirm dialog
+
+    wx.showModal({
+      title: '',
+      content: 'Delete Clock Selected?',
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      success: res => {
+          if (res.confirm) {
+            let cities = this.data.cities;
+            let remainedCities = [];
+            cities.filter(city => {
+              if(!city.checked) {
+                remainedCities.push(city);
+              }
+            });
+            this.reloadCities(remainedCities);
+            this.saveCities(remainedCities);
+            //change state
+            this.setState(0);
+          } else {
+              log("User cancel deleting.");
+          }
       }
     });
-    this.reloadCities(remainedCities);
-    this.saveCities(remainedCities);
   },
 
   setState: function(newState) {
