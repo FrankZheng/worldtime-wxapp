@@ -4,7 +4,7 @@ const KEY_CITIES = "city_list"; //for storage
 
 
 const loadCities = () => {
-  return wx.getStorageSync(KEY_CITIES);
+  return wx.getStorageSync(KEY_CITIES) || []
 }
 
 const saveCities = (cities) => {

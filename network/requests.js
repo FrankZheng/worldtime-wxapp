@@ -2,7 +2,7 @@ const net = require('./network.js');
 const log = require('../utils/log.js');
 
 const PRODUCT_BASER_URL = "https://xqlabserv.com/api/";
-const DEV_BASE_URL = "http://localhost:3000/api/";
+const DEV_BASE_URL = "http://localhost:5000/api/";
 
 const DEFAULT_CITIES_URL = "defaultCities";
 const SEARCH_CITY_URL = "searchCityByFuzzyName";
@@ -10,7 +10,7 @@ const SEARCH_CITY_URL = "searchCityByFuzzyName";
 const DEFAULT_PAGE_SIZE = 20;
 const DEFAULT_PAGE_NUM = 1;
 
-let useDev = false;
+let useDev = true;
 
 const baseURL = () => {
     return useDev ? DEV_BASE_URL : PRODUCT_BASER_URL;
