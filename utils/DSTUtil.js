@@ -72,20 +72,22 @@ const DSTCheck = (city, _date) => {
 }
 
 // get city's local time according to its timezone
+// and city's time zone offset against local(app running place) time
 const localDateForCity = (city, _date) => {
     let date = _date || new Date();
 
     //need check if city use DST for now.
     //if use DST, local time + 1 hour
     let millsPerHour = 60 * 60 * 1000;
-    let localTime = date.getTime() + city.timezone * millsPerHour;
-    let localDate = new Date(localTime);
+    //calculate time zone offset
+    let timezoneOffset = date.getTimezoneOffset() / 60 + city.timezone; //hours
     let [isDST, dstOffset] = DSTCheck(city);
     if(isDST) {
-        localDate = new Date(localTime + dstOffset * millsPerHour);
+        timezoneOffset += dstOffset;
     }
-
-    return localDate;
+    let localTime = date.getTime() + timezoneOffset * millsPerHour;
+    
+    return [new Date(localTime), timezoneOffset];
 }
 
 module.exports = {
@@ -94,6 +96,7 @@ module.exports = {
 
 
 if (require.main == module) {
+    //do some testing
     console.log("run DSTUtil.js");
     let dateStr = "2018-03-11 02:00:00";
     console.log(transDate(dateStr, -8));
@@ -114,10 +117,19 @@ if (require.main == module) {
         stateName : "Hawaii"
     };
 
-    [city1, city2].forEach( function(city) {
+    let city3 = {
+        name : "Beijing",
+        countryCode : "CN",
+        timezone : 8,
+        countryName : "China",
+        stateName : "Beijing"
+    };
+
+    [city1/*, city2, city3*/].forEach( function(city) {
         let [isDST, offset] = DSTCheck(city);
-        let localDate = localDateForCity(city);
-        log("city: {0}, isDST:{1}, DST_offset:{2}, localDate:{3}", city.name, isDST, offset, localDate);
+        let [localDate, offsetDiff] = localDateForCity(city);
+        log("city: {0}, isDST:{1}, DST_offset:{2}, localDate:{3}, offsetDiff:{4}", 
+            city.name, isDST, offset, localDate, offsetDiff);
     });
   
   }

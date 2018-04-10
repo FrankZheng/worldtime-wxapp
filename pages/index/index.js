@@ -5,6 +5,7 @@ const net = require('../../network/network.js');
 const repo = require('../../repository/repository.js');
 const prefs = require('../../preference/preference.js');
 const requests = require('../../network/requests.js');
+const DSTUtil = require('../../utils/DSTUtil.js');
 
 const loadDefaultCities = requests.loadDefaultCities;
 
@@ -171,17 +172,14 @@ function buildHourLabel(offset) {
 function processCityList(cityList) {
   //console.log(res.data);
   let now = new Date();
-  let localTimezoneOffset = now.getTimezoneOffset() / 60; //minutes
   //console.log(util.formatTime(now));
-  let nowTime = now.getTime();
   let cities = cityList;
   cities.forEach(function (city) {
     city.displayName = util.toTitleCase(city.displayName);
     //calculate time
-    let timezoneOffset = localTimezoneOffset + city.timezone; //hours
-    let localTime = nowTime + timezoneOffset * 60 * 60 * 1000;
-    city.localTimeStr = util.formatTime(new Date(localTime));
-    city.dayLabel = buildDayLabel(nowTime, timezoneOffset);
+    let [localDate, timezoneOffset] = DSTUtil.localDateForCity(city, now);
+    city.localTimeStr = util.formatTime(localDate);
+    city.dayLabel = buildDayLabel(now.getTime(), timezoneOffset);
     city.hourLabel = buildHourLabel(timezoneOffset);
   });
   return cities;
