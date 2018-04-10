@@ -1,7 +1,6 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/worldtime/worldtime",
     "pages/logs/logs",
     "pages/search/search"
   ],

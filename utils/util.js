@@ -27,11 +27,32 @@ const formatDateTime = date => {
   return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute, second].map(formatNumber).join(':')
 }
 
-const formatTime = date => {
-  const hour = date.getHours()
-  const minute = date.getMinutes()
-  const second = date.getSeconds()
-  return [hour, minute, second].map(formatNumber).join(':')
+// const formatTime = date => {
+//   const hour = date.getHours();
+//   const minute = date.getMinutes();
+//   const second = date.getSeconds();
+//   return [hour, minute, second].map(formatNumber).join(':');
+// }
+
+const formatTime = (date, use12) => {
+  let hour = date.getHours();
+  let postfix = 'AM';
+  if (use12) {
+    if (hour >= 12 && hour < 24) {
+      postfix = "PM";
+    }
+    if (hour == 0 || hour == 24) {
+      hour = 12;
+    }
+  }
+  
+  const minute = date.getMinutes();
+  const second = date.getSeconds();
+  let timeStr = [hour, minute, second].map(formatNumber).join(':');
+  if (use12) {
+    timeStr = timeStr + postfix;
+  }
+  return timeStr;
 }
 
 

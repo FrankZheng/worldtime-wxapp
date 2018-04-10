@@ -16,6 +16,18 @@ const transDate = (dateStr, timezone) => {
     return new Date(str);
 }
 
+const defaultDSTFunc = function (date, timezone, DSTDates) {
+  //here date is the local date of the city
+  let year = date.getFullYear();
+  let dstDates = DSTDates[year];
+  if (dstDates) {
+    let startDate = transDate(dstDates[0], timezone);
+    let endDate = transDate(dstDates[1], timezone);
+    return (date >= startDate && date <= endDate);
+  }
+  return false;
+} 
+
 const DST_Settings = [
     { 
         /*
@@ -26,31 +38,41 @@ const DST_Settings = [
         and in fall they are moved back from 2:00 a.m. to 1:00 a.m. 
         Daylight saving time lasts for a total of 34 weeks (238 days) every year, about 65% of the entire year.
         */
-        countryCode : "US",
+        countryCode : ["US"],
         excludeStateNames : ["Arizona", "Hawaii"],
         DSTDates: {
             2018 : ["2018-03-11 02:00:00", "2018-11-04 02:00:00"],
             2019 : ["2018-03-10 02:00:00", "2018-11-03 02:00:00"],
             2020 : ["2018-03-08 02:00:00", "2018-11-01 02:00:00"]
         },
-        DSTOffset : 1, //hours 
-        isDSTFunc : function(date, timezone) {
-            //here date is the local date of the city
-            let year = date.getFullYear();
-            let dstDates = this.DSTDates[year];
-            if (dstDates) {
-                let startDate = transDate(dstDates[0], timezone);
-                let endDate = transDate(dstDates[1], timezone);
-                return (date >= startDate && date <= endDate);
-            }
-            return false;
+        DSTOffset: 1, //hours 
+        isDSTFunc: function(date, timezone) {
+          return defaultDSTFunc(date, timezone, this.DSTDates);
+            // //here date is the local date of the city
+            // let year = date.getFullYear();
+            // let dstDates = this.DSTDates[year];
+            // if (dstDates) {
+            //     let startDate = transDate(dstDates[0], timezone);
+            //     let endDate = transDate(dstDates[1], timezone);
+            //     return (date >= startDate && date <= endDate);
+            // }
+            // return false;
         }
     },
     {
-        countryCode : "US",
-        excludeStateNames : ["Arizona", "Hawaii"],
-        isDSTFunc : (now_, city) => {
-            return true;
+        countryCode: ["GB", "DE", "FR", "AL", "AD", "AT", "BE", "BA", "HR", "CZ", "DK",
+          "GI", "HU", "IT", "XK", "LI", "LU", "MT", "MC", "ME", "NL", "NO", "PL", "MK",
+          "SM","RS", "SK", "SI", "ES", "SE", "CH", "VA", "PT", "BG", "CY", "EE", "FI",
+          "GR", "IE", "LV"],
+        excludeStateNames: ["Canary Islands"],
+        DSTDates: {
+          2018: ["2018-03-25 01:00:00", "2018-10-28 01:00:00"],
+          2019: ["2019-03-31 01:00:00", "2018-10-27 01:00:00"],
+          2020: ["2020-03-29 01:00:00", "2018-10-25 02:00:00"]
+        },
+        DSTOffset: 1, //hours
+        isDSTFunc : function(date, timezone) {
+          return defaultDSTFunc(date, timezone, this.DSTDates);
         }
     }
 ];
@@ -61,7 +83,7 @@ const DSTCheck = (city, _date) => {
     let date = _date || new Date(); 
     for( let i = 0 ; i < DST_Settings.length ; i++) {
         let setting = DST_Settings[i];
-        if (setting.countryCode == city.countryCode) {
+        if (setting.countryCode.includes(city.countryCode)) {
             if(!setting.excludeStateNames.includes(city.stateName)) {
                 return [setting.isDSTFunc(date, city.timezone), setting.DSTOffset];
             }
