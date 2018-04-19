@@ -6,10 +6,9 @@ const repo = require('../../repository/repository.js');
 const prefs = require('../../preference/preference.js');
 const requests = require('../../network/requests.js');
 const DSTUtil = require('../../utils/DSTUtil.js');
+const localUtil = require('./util.js');
 
 const loadDefaultCities = requests.loadDefaultCities;
-
-const app = getApp()
 
 Page({
   data: {
@@ -178,10 +177,13 @@ function processCityList(cityList) {
     city.displayName = util.toTitleCase(city.displayName);
     //calculate time
     let [localDate, timezoneOffset] = DSTUtil.localDateForCity(city, now);
-    city.localTimeStr = util.formatTime(localDate, false);
+    let [localTimeStr, isAM] = localUtil.formatTime(localDate);
+    city.localTimeStr = localTimeStr;
+    city.isAM = isAM;
     city.dayLabel = buildDayLabel(now.getTime(), timezoneOffset);
     city.hourLabel = buildHourLabel(timezoneOffset);
   });
   return cities;
 }
+
 

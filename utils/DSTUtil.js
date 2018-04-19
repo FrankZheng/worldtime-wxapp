@@ -41,6 +41,7 @@ const DST_Settings = [
         countryCode : ["US"],
         excludeStateNames : ["Arizona", "Hawaii"],
         DSTDates: {
+          /* local date */
             2018 : ["2018-03-11 02:00:00", "2018-11-04 02:00:00"],
             2019 : ["2018-03-10 02:00:00", "2018-11-03 02:00:00"],
             2020 : ["2018-03-08 02:00:00", "2018-11-01 02:00:00"]
@@ -60,12 +61,16 @@ const DST_Settings = [
         }
     },
     {
+      /*
+      Since 1996 European Summer Time has been observed between 1:00 UTC (2:00 CET and 3:00 CEST) on the last Sunday of March and 1:00 UTC on the last Sunday of October;
+      */
         countryCode: ["GB", "DE", "FR", "AL", "AD", "AT", "BE", "BA", "HR", "CZ", "DK",
           "GI", "HU", "IT", "XK", "LI", "LU", "MT", "MC", "ME", "NL", "NO", "PL", "MK",
           "SM","RS", "SK", "SI", "ES", "SE", "CH", "VA", "PT", "BG", "CY", "EE", "FI",
-          "GR", "IE", "LV"],
+          "GR", "IE", "LV","LT",],
         excludeStateNames: ["Canary Islands"],
         DSTDates: {
+          /* UTC time */
           2018: ["2018-03-25 01:00:00", "2018-10-28 01:00:00"],
           2019: ["2019-03-31 01:00:00", "2018-10-27 01:00:00"],
           2020: ["2020-03-29 01:00:00", "2018-10-25 02:00:00"]
@@ -103,7 +108,8 @@ const localDateForCity = (city, _date) => {
     let millsPerHour = 60 * 60 * 1000;
     //calculate time zone offset
     let timezoneOffset = date.getTimezoneOffset() / 60 + city.timezone; //hours
-    let [isDST, dstOffset] = DSTCheck(city);
+    //TODO: here the date should be local date of the city.
+    let [isDST, dstOffset] = DSTCheck(city, date);
     if(isDST) {
         timezoneOffset += dstOffset;
     }

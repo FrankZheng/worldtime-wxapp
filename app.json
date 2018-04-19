@@ -2,12 +2,42 @@
   "pages": [
     "pages/index/index",
     "pages/logs/logs",
-    "pages/search/search"
+    "pages/search/search",
+    "pages/schedule/schedule",
+    "pages/info/info"
   ],
   "window": {
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#fff",
+    "backgroundTextStyle": "White",
+    "navigationBarBackgroundColor": "#df3a32",
+    "backgroundColor": "#efeff4",
     "navigationBarTitleText": "World Clock",
-    "navigationBarTextStyle": "black"
+    "navigationBarTextStyle": "White"
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#222",
+    "backgroundColor": "#f8f9fb",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "clock",
+        "iconPath": "assets/earth.png",
+        "selectedIconPath": "assets/earth-active.png"
+      },
+      {
+        "pagePath": "pages/schedule/schedule",
+        "text": "schedule",
+        "iconPath": "assets/todos.png",
+        "selectedIconPath": "assets/todos-active.png"
+      },
+      {
+        "pagePath": "pages/info/info",
+        "text": "info",
+        "iconPath": "assets/info.png",
+        "selectedIconPath": "assets/info-active.png"
+      }
+    ]
   }
+  
 }

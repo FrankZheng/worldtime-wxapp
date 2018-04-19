@@ -6,7 +6,7 @@
     <view class="item separator" />
     <view class="item" bindtap="onAddTap">Add</view>
     <view class="horizPlaceholder"/>
-    <view class="item">Local: Beijing 2:37 PM</view>
+    <!-- <view class="item">Local: Beijing 2:37 PM</view> -->
   </view>
   <view class="topBar {{state != 1 ? 'hide' : ''}}">
     <view class="item" bindtap="onCancelTap">Cancel</view>
@@ -29,7 +29,10 @@
       <view class="horizPlaceholder"/>
       <view class="timeView">
         <view class="dayLabel">{{item.dayLabel}}</view>
-        <view class="time">{{item.localTimeStr}}</view>
+        <view class="timeContainer">
+          <view class="time">{{item.localTimeStr}}</view>
+          <view class="postfix">{{item.isAM ? "AM" : "PM"}}</view>
+        </view>
         <view class="hourLabel">{{item.hourLabel}}</view>
       </view>
     </view>

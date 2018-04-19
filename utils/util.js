@@ -73,7 +73,8 @@ module.exports = {
   formatDateTime : formatDateTime,
   formatTime : formatTime,
   toTitleCase : toTitleCase,
-  sprintf : sprintf
+  sprintf : sprintf,
+  formatNumber : formatNumber
 }
 
 
