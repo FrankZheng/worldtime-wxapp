@@ -1,8 +1,8 @@
 const years = function(year) {
   let years = [year, year+1];
-  for (let i = 0 ; i < years.length ; i++) {
-    years[i] = years[i] + 'Y';
-  }
+  // for (let i = 0 ; i < years.length ; i++) {
+  //   years[i] = years[i] + 'Y';
+  // }
   return years;
 }
 
@@ -55,7 +55,7 @@ const days = function(year, month) {
 
 function hours() {
     let hours = []
-    for (let i = 1 ; i <= 23; i++) {
+    for (let i = 0 ; i <= 23; i++) {
         hours.push(i + 'H');
     }
     return hours;
@@ -63,7 +63,7 @@ function hours() {
 
 function minutes() {
     let minutes = [];
-    for (let i = 1 ; i <= 59; i++) {
+    for (let i = 0 ; i <= 59; i++) {
         minutes.push(i + 'M');
     }
     return minutes;

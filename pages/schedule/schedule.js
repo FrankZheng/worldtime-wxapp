@@ -35,20 +35,24 @@ function setUpPickerForCity(city) {
   let minute = localDate.getMinutes(); //1 start
   let [years, months, days, hours, minutes] = [datetime_util.years(year), datetime_util.months, datetime_util.days(year, month), datetime_util.hours, datetime_util.minutes];
   city.dtPickerRange = [years, months, days, hours, minutes];
-  city.dtPickerIndex = [0, month-1, day-1, hour-1, minute-1];
+  city.dtPickerIndex = [0, month-1, day-1, hour, minute];
 }
 
 
-function processCityList(cityList) {
-  //console.log(res.data);
+function processCityList(cityList, refreshDate=false, offset=0) {
   let now = new Date();
-  //console.log(util.formatTime(now));
   let cities = cityList;
   cities.forEach(function (city) {
     city.displayName = util.toTitleCase(city.displayName);
     //calculate time
-    let [localDate, timezoneOffset] = DSTUtil.localDateForCity(city, now);
-    city.localDate = localDate;
+    if(refreshDate) {
+      let [localDate, timezoneOffset] = DSTUtil.localDateForCity(city, now);
+      city.localDate = localDate;
+    }
+    if(offset > 0) {
+      city.localDate = new Date(city.localDate.getTime() + offset);
+    }
+    let localDate = city.localDate;
     city.localDateStr = formatDate(localDate);
     city.localTimeStr = formatTime(localDate);
     city.pickerDate = new Date(localDate.getTime());
@@ -77,7 +81,7 @@ Page({
     }
     let prevSelected = this.selectedIdx;
     this.selectedIdx = index;
-    
+
     if(prevSelected >= 0) {
       //clear prev selected
       let city = this.data.cities[prevSelected];
@@ -107,7 +111,7 @@ Page({
    */
   onShow: function () {
     log("onShow")
-    let cities = processCityList(repo.loadCities());
+    let cities = processCityList(repo.loadCities(), true);
     this.setData({cities:cities});
   },
 
@@ -148,6 +152,21 @@ Page({
 
   bindDatetimeChange: function(e) {
     log("bindDatetimeChange, {0}", e.detail.value);
+    let city = this.data.cities[this.selectedIdx];
+    let [years, months, days, hours, minutes] = city.dtPickerRange;
+    let [yearIdx, month, day, hour, minute] = e.detail.value;
+    let year = years[yearIdx];
+    let prevDate = city.localDate;
+    let updateDate = new Date();
+    updateDate.setFullYear(year);
+    updateDate.setMonth(month);
+    updateDate.setDate(day+1);
+    updateDate.setHours(hour);
+    updateDate.setMinutes(minute);
+    let offset = updateDate.getTime() - prevDate.getTime();
+    let cities = processCityList(this.data.cities, false, offset);
+    city.selected = true;
+    this.setData({cities:this.data.cities});
   },
 
   bindDatetimeColumnChange: function(e) {
