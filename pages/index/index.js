@@ -16,7 +16,8 @@ Page({
     cities: []
   },
 
-  loadingCities : false,
+  loadingCities: false,
+  refreshTimer: null,
 
   onLoad: function() {
     log("onLoad");
@@ -24,7 +25,7 @@ Page({
       this.loadDefaultCities(cities => {
         this.reloadCities(cities);
         repo.saveCities(cities);
-        prefs.defaultCitiesLoaded = true; 
+        prefs.defaultCitiesLoaded = true;
       });
     }
   },
@@ -36,10 +37,16 @@ Page({
       cities = processCityList(cities);
       this.reloadCities(cities);
     }
+    this.refreshTimer = setInterval(() => {
+      //log("timer timeout");
+      let cities = processCityList(this.data.cities);
+      this.reloadCities(cities);
+    }, 30000);
   },
 
   onHide: function() {
     log("onHide");
+    clearInterval(this.refreshTimer);
   },
 
   onUnLoad: function() {
@@ -57,7 +64,7 @@ Page({
         }
       } else {
         let cities = processCityList(data);
-        success(cities);  
+        success(cities);
       }
     });
   },
@@ -76,16 +83,16 @@ Page({
     let index = e.currentTarget.dataset.index;
     log("onCityItemTap, index:" + index);
     if (this.data.state == 1) {
-      let cities = this.data.cities; 
+      let cities = this.data.cities;
       let city = cities[index];
       city.checked = !city.checked;
       this.reloadCities(cities);
     }
   },
 
-  reloadCities:function(cities) {
+  reloadCities: function(cities) {
     this.setData({
-      cities:cities
+      cities: cities
     });
   },
 
@@ -117,21 +124,21 @@ Page({
       confirmText: "Delete",
       cancelText: "Cancel",
       success: res => {
-          if (res.confirm) {
-            let cities = this.data.cities;
-            let remainedCities = [];
-            cities.filter(city => {
-              if(!city.checked) {
-                remainedCities.push(city);
-              }
-            });
-            this.reloadCities(remainedCities);
-            this.saveCities(remainedCities);
-            //change state
-            this.setState(0);
-          } else {
-              log("User cancel deleting.");
-          }
+        if (res.confirm) {
+          let cities = this.data.cities;
+          let remainedCities = [];
+          cities.filter(city => {
+            if (!city.checked) {
+              remainedCities.push(city);
+            }
+          });
+          this.reloadCities(remainedCities);
+          this.saveCities(remainedCities);
+          //change state
+          this.setState(0);
+        } else {
+          log("User cancel deleting.");
+        }
       }
     });
   },
@@ -139,7 +146,7 @@ Page({
   setState: function(newState) {
     log("setState, new:" + newState + " old:" + this.data.state);
     this.setData({
-      state : newState
+      state: newState
     })
   },
 })
@@ -169,11 +176,9 @@ function buildHourLabel(offset) {
 }
 
 function processCityList(cityList) {
-  //console.log(res.data);
   let now = new Date();
-  //console.log(util.formatTime(now));
   let cities = cityList;
-  cities.forEach(function (city) {
+  cities.forEach(function(city) {
     city.displayName = util.toTitleCase(city.displayName);
     //calculate time
     let [localDate, timezoneOffset] = DSTUtil.localDateForCity(city, now);
@@ -185,5 +190,3 @@ function processCityList(cityList) {
   });
   return cities;
 }
-
-
