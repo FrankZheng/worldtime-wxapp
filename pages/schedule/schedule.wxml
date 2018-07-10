@@ -1,2 +1,20 @@
 <!--pages/schedule/schedule.wxml-->
-<text>pages/schedule/schedule.wxml</text>
+<view class="container">
+
+<!-- City List-->
+  <scroll-view class="cityListView">
+    <view class="item" wx:for="{{cities}}" wx:key="{{index}} 
+      bindtap="onCityItemTap" data-index="{{index}}">
+      <view class="cityName">{{item.displayName}}</view>
+      <view class="horizPlaceholder"/>
+      <view class="datetimeView">
+        <picker mode="multiSelector" bindchange="bindDatetimeChange" bindcolumnchange="bindDatetimeColumnChange"
+                value="{{item.dtPickerIndex}}" range="{{item.dtPickerRange}}">
+          <view class="dateView {{item.selected ? 'selected':'unselected'}}">{{item.localDateStr}}</view>
+          <view class="timeView {{item.selected ? 'selected':'unselected'}}">{{item.localTimeStr}}</view>
+        </picker>  
+      </view>
+    </view>
+  </scroll-view>  
+
+</view>

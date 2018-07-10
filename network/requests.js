@@ -10,7 +10,7 @@ const SEARCH_CITY_URL = "searchCityByFuzzyName";
 const DEFAULT_PAGE_SIZE = 20;
 const DEFAULT_PAGE_NUM = 1;
 
-let useDev = true;
+let useDev = false;
 
 const baseURL = () => {
     return useDev ? DEV_BASE_URL : PRODUCT_BASER_URL;
